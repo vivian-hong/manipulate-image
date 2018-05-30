@@ -1,0 +1,170 @@
+/*
+ *      commands.c
+ *      Authors: Vivian Hong and Andrew Savage
+ *      Date: 10/5/16
+ *      HW3 Part C
+ *
+ *      Implementation for functions used to manipulate images and time
+ *      these manipulations 
+ */
+
+#include <stdlib.h>
+#include <string.h>
+#include <except.h>
+#include "commands.h"
+
+const Except_T NULLMALLOC = { "Not enough memory to allocate" };
+
+/* Purpose: Calls a function that either rotates, flips or transposes image 
+ * Arguments: Source image, char * that contains the type of manipulation,
+ *            degree of rotation, methods containing functions for the 
+ *            A2Methods_UArray2, mapping function for the A2Methods_UArray2, 
+ *            boolean denoting whether or not the flip is vertical, timer,
+ *            manipulation runtime
+ * Returns: Manipulated image
+ */
+A2Methods_UArray2 manipulate_image(A2Methods_UArray2 image, char *manipulate, 
+                                   int rotation, A2Methods_T methods, 
+                                   A2Methods_mapfun *map, int vert,
+                                   CPUTime_T timer, double *runtime)
+{
+        void *manipulated;
+        if (strcmp(manipulate, "rotate") == 0) {
+                manipulated = rotate_img(image, rotation, methods, map, timer,
+                                         runtime);
+        } else if (strcmp(manipulate, "flip") == 0) {
+                manipulated = flip(image, methods, map, vert, timer, runtime);
+        } else if (strcmp(manipulate, "transpose") == 0) {
+                manipulated = transpose_img(image, methods, map, timer, 
+                                            runtime);
+        }
+        return manipulated;
+}
+
+/* Purpose: Rotate an image the specified degrees
+ * Arguments: Source image, degree of rotation, methods containing functions
+ *            for the A2Methods_UArray2, mapping function for the 
+ *            A2Methods_UArray2, timer, manipulation runtime
+ * Returns: Rotated image
+ */
+A2Methods_UArray2 rotate_img(A2Methods_UArray2 image, int rotation,
+                             A2Methods_T methods, A2Methods_mapfun *map,
+                             CPUTime_T timer, double *runtime)
+{
+        MapClosure *cl = malloc(sizeof(*cl));
+        if (cl == NULL) {
+                RAISE(NULLMALLOC);
+        }
+        A2Methods_UArray2 rotated_image;
+        if (rotation == 0 || rotation == 180) {
+                /* creating new A2Methods_UArray2 with same dimensions */
+                rotated_image = 
+                        methods -> new_with_blocksize(methods -> width(image),
+                                                      methods -> height(image), 
+                                                      methods -> size(image), 
+                                                      methods -> blocksize
+                                                      (image));
+        } else {
+                /* creating new A2Methods_UArray2 with switched dimensions */
+                rotated_image = 
+                        methods -> new_with_blocksize(methods -> height(image),
+                                                      methods -> width(image), 
+                                                      methods -> size(image), 
+                                                      methods -> blocksize
+                                                      (image));
+        } 
+        cl -> methods = methods;
+        cl -> destination_image = rotated_image;
+        if (rotation == 0) {
+                time_check(map, image, rotate0, cl, timer, runtime);
+        } else if (rotation == 90) {
+                time_check(map, image, rotate90, cl, timer, runtime);
+        } else if (rotation == 180) {
+                time_check(map, image, rotate180, cl, timer, runtime);
+        } else if (rotation == 270) {
+                time_check(map, image, rotate270, cl, timer, runtime);
+        }
+        free(cl);
+        return rotated_image;
+}
+
+/* Purpose: Flip an image the specified degrees
+ * Arguments: Source image, methods containing functions for the 
+ *            A2Methods_UArray2, mapping function for the A2Methods_UArray2,
+ *            boolean denoting whether or not the flip is vertical, timer, 
+ *            manipulation runtime
+ * Returns: Flipped image
+ */
+A2Methods_UArray2 flip(A2Methods_UArray2 image, A2Methods_T methods, 
+                       A2Methods_mapfun map, int vert, CPUTime_T timer,
+                       double *runtime)
+{
+        MapClosure *cl = malloc(sizeof(*cl));
+        if (cl == NULL) {
+                RAISE(NULLMALLOC);
+        }
+        A2Methods_UArray2 flipped_image = 
+                /* creating new A2Methods_UArray2 with same dimensions */
+                methods -> new_with_blocksize(methods -> width(image), 
+                                              methods -> height(image), 
+                                              methods -> size(image), 
+                                              methods -> blocksize(image));
+        cl -> methods = methods;
+        cl -> destination_image = flipped_image;
+        if (vert == 1) {
+                time_check(map, image, flip_vert, cl, timer, runtime);
+        } else {
+                time_check(map, image, flip_horz, cl, timer, runtime);
+        }
+        free(cl);
+        return flipped_image;
+}
+
+/* Purpose: Transposes an image
+ * Arguments: Source image, methods containing the functions for the 
+ *            A2Methods_UArray2, mapping function for the A2Methods_UArray2,
+ *            timer, manipulation runtime
+ * Returns: Transposed image
+ */
+A2Methods_UArray2 transpose_img(A2Methods_UArray2 image, A2Methods_T methods,
+                                A2Methods_mapfun *map, CPUTime_T timer,
+                                double *runtime)
+{
+        MapClosure *cl = malloc(sizeof(*cl));
+        if (cl == NULL) {
+                RAISE(NULLMALLOC);
+        }
+        A2Methods_UArray2 transposed_image = 
+                /* creating new A2Methods_UArray2 with switched dimensions */
+                methods -> new_with_blocksize(methods -> height(image), 
+                                              methods -> width(image), 
+                                              methods -> size(image), 
+                                              methods -> blocksize(image));
+        cl -> methods = methods;
+        cl -> destination_image = transposed_image;
+        time_check(map, image, transpose, cl, timer, runtime);
+        free(cl);
+        return transposed_image;
+}
+
+/* Purpose: Times a specific manipulation and records it if the timmer is not
+ *          NULL
+ * Arguments: Mapping function for the A2Methods_UArray2, source image, apply
+ *            function that is used in the map, closure used in map, timer,
+ *            manipulation runtime
+ * Returns: Nothing
+ */
+void time_check(A2Methods_mapfun map, A2Methods_UArray2 image, 
+                void apply(int col, int row, A2Methods_UArray2 image, 
+                           void *element, void *cl),
+                void *cl, CPUTime_T timer, double *runtime)
+{
+        if (timer != NULL) {
+                CPUTime_Start(timer);
+                map(image, apply, cl);
+                *runtime = CPUTime_Stop(timer);
+                CPUTime_Free(&timer);
+        } else {
+                map(image, apply, cl);
+        }
+}

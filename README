@@ -1,0 +1,135 @@
+README
+Authors: Andrew Savage and Vivian Hong
+Date: 10/6/16
+HW3
+
+Help recieved: None
+
+Correctly Implemented:
+       To our knowledge and extensive testing everything has been correctly
+       implemented.
+
+Incorrectly Implemented:
+       To our knowledge and extensive testing nothing has been incorrectly 
+       implemented.
+
+Architecture of Solutions:
+
+       Pnmtrans uses pnm.h to read in ppm files, which it does using a2methods,
+       an abstraction for functions (defined in a2blocked and a2plain) to 
+       manipulate a 2D array. The 2D array will either be represented as an 
+       UArray2b_T or UArray2_T. The functions in a2blocked and a2plain are
+       functions in UArray2b and UArray2, respectively, but hidden from the 
+       client. Pnmtrans also uses cputiming to keep track of the time taken
+       for each manipulation.
+
+Measured performance for Part E:
+
+Name of computer: Dell Precision T1650
+CPU type and clock rate: Intel(R) Core(TM) i7-3770 CPU @ 3.40GHz
+
+Image 1:
+Size = 6912 X 3888
+       Manipulation          |  Total time | Time / input pixel | Instructions |
+Rotate 0 block major         |1430407409.0 |53.226727           |53.226727     |
+Rotate 0 row major           | 772855851.0 |28.758651           |28.758651     |
+Rotate 0 col major           |1644924238.0 |61.209089           |61.209089     |
+Rotate 90 block major        |1479124492.0 |55.039533           |55.039533     |
+Rotate 90 row major          |1299617939.0 |48.359935           |48.359935     |
+Rotate 90 col major          |1357599289.0 |50.517473           |50.517473     |
+Rotate 180 block major       |1574870954.0 |58.602344           |58.602344     |
+Rotate 180 row major         | 924641807.0 |34.406741           |34.406741     |
+Rotate 180 col major         |1946852097.0 |72.444092           |72.444092     |
+
+
+Image 2:
+Size =  6083 X 4565
+       Manipulation          |  Total time | Time / input pixel | Instructions |
+Rotate 0 block major         |1472717733.0 |53.034798           |53.034798     |
+Rotate 0 row major           | 793322505.0 |28.568746           |28.568746     |
+Rotate 0 col major           |1662295692.0 |59.861788           |59.861788     |
+Rotate 90 block major        |1564572080.0 |56.342612           |56.342612     |
+Rotate 90 row major          |1375855922.0 |49.546657           |49.546657     |
+Rotate 90 col major          |1393342516.0 |50.176376           |50.176376     |
+Rotate 180 block major       |1618716787.0 |58.292445           |58.292445     |
+Rotate 180 row major         | 945522095.0 |34.049684           |34.049684     |
+Rotate 180 col major         |1948419174.0 |70.165528           |70.165528     |
+
+Image 3: 6432 X 4272 
+Size = 
+       Manipulation          |  Total time | Time / input pixel | Instructions |
+Rotate 0 block major         |1467605947.0 |53.411181           |53.411181     |
+Rotate 0 row major           | 792604822.0 |28.845590           |28.845590     |
+Rotate 0 col major           |1628188913.0 |59.255343           |59.255343     |
+Rotate 90 block major        |1539581625.0 |56.030621           |56.030621     |
+Rotate 90 row major          |1367488978.0 |49.767584           |49.767584     |
+Rotate 90 col major          |1460327773.0 |53.146304           |53.146304     |
+Rotate 180 block major       |1601530092.0 |58.285137           |58.285137     |
+Rotate 180 row major         | 943094722.0 |34.322431           |34.322431     |
+Rotate 180 col major         |1985071806.0 |72.243527           |72.243527     |
+
+Image 4: 6400 X 3800 
+Size = 
+       Manipulation          |  Total time | Time / input pixel | Instructions |
+Rotate 0 block major         |1303984914.0 |53.617801           |53.617801     |
+Rotate 0 row major           | 696796608.0 |28.651176           |28.651176     |
+Rotate 0 col major           |1439929759.0 |59.207638           |59.207638     |
+Rotate 90 block major        |1332571238.0 |54.793225           |54.793225     |
+Rotate 90 row major          |1174363074.0 |48.287955           |48.287955     |
+Rotate 90 col major          |1229291342.0 |50.546519           |50.546519     |
+Rotate 180 block major       |1434260310.0 |58.974519           |58.974519     |
+Rotate 180 row major         | 837763513.0 |34.447513           |34.447513     |
+Rotate 180 col major         |1728827370.0 |71.086652           |71.086652     |
+
+Image 5: 
+Size = 7020 X 4680 
+       Manipulation          |  Total time | Time / input pixel | Instructions |
+Rotate 0 block major         |1746384995.0 |53.156579           |53.156579     |
+Rotate 0 row major           | 943784299.0 |28.726967           |28.726967     |
+Rotate 0 col major           |1974303474.0 |60.093977           |60.093977     |
+Rotate 90 block major        |1794699466.0 |54.627178           |54.627178     |
+Rotate 90 row major          |1641568060.0 |49.966155           |49.966155     |
+Rotate 90 col major          |1665133760.0 |50.683449           |50.683449     |
+Rotate 180 block major       |1920496918.0 |58.456209           |58.456209     |
+Rotate 180 row major         |1128611584.0 |34.352752           |34.352752     |
+Rotate 180 col major         |2392479194.0 |72.822436           |72.822436     |
+
+Image 6:
+Size = 7000 X 3940 
+       Manipulation          |  Total time | Time / input pixel | Instructions |
+Rotate 0 block major         |1459043197.0 |52.902219           |52.902219     |
+Rotate 0 row major           | 826298607.0 |29.960066           |29.960066     |
+Rotate 0 col major           |1653850607.0 |59.965577           |59.965577     |
+Rotate 90 block major        |1493725721.0 |54.159743           |54.159743     |
+Rotate 90 row major          |1350522762.0 |48.967468           |48.967468     |
+Rotate 90 col major          |1399078405.0 |50.728006           |50.728006     |
+Rotate 180 block major       |1603200613.0 |58.129101           |58.129101     |
+Rotate 180 row major         | 952355870.0 |34.530670           |34.530670     |
+Rotate 180 col major         |2012990632.0 |72.987333           |72.987333     |
+
+Patterns found throughout testing various images:
+         - time taken for rotating 0 and rotating 180 row major was about
+           half the time taken for rotating 0 and rotating 180 block major
+         - col major took the longest for 0 and 180 rotations
+         - block major took the longest for rotate 90
+         - col major always takes longer than row major, much longer for rotate
+           0 and rotate 180 and only a little bit longer for rotate 90
+         - time per pixel and instructions per pixel are always the same no 
+           matter the size of the image
+         - relative to the differences in time between different rotations done
+           row and col major, block major time taken to rotate different degrees
+           is relatively similar, though still shortest for rotate 0 and longest
+           for rotate 180
+
+    When mapping by block, there will always be about the same hit rate no
+    matter the type. This is due to the same number of columns and rows being 
+    loaded in a block. The differences in times for different rotations are
+    due to minor differences in the number of operations done per pixel. Row
+    major performs much better for rotate 0 and rotate 180 and col major
+    performs much better for rotate 90 because needed elements will more likely
+    already be in the cache for these respective manipulations. 
+
+Hours spent: 25
+
+
+
